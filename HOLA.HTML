@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Unitrack App</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #f3f9ff, #d6ecf3);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #scaleControl {
+      margin-bottom: 10px;
+    }
+
+    .phone-wrapper {
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .phone-frame {
+      width: 320px;
+      height: 640px;
+      background: #000;
+      border-radius: 50px;
+      padding: 8px;
+      box-sizing: border-box;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .phone-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border-radius: 40px;
+      overflow: hidden;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      overflow-y: auto;
+      padding: 16px;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 1;
+    }
+
+    .app-header {
+      font-size: 1.4rem;
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .menu-toggle {
+      position: absolute;
+      left: 10px;
+      top: 4px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .tab-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tab-button {
+      padding: 10px;
+      font-size: 1rem;
+      background: #e0f0ff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .tab-button:hover {
+      background: #b0dcff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .tab-content img {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .sidebar {
+      position: absolute;
+      left: -220px;
+      top: 0;
+      height: 100%;
+      width: 200px;
+      background: #e8f4fb;
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+      transition: left 0.3s ease;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    .sidebar.show {
+      left: 0;
+    }
+
+    .sidebar button {
+      background: none;
+      border: none;
+      margin: 10px 0;
+      font-size: 1.05rem;
+      text-align: left;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .sidebar button:hover {
+      background: #c2e5f5;
+    }
+
+    .close-sidebar {
+      color: red;
+      font-weight: bold;
+      align-self: flex-end;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    .extra-content {
+      display: none;
+    }
+
+    .extra-content.active {
+      display: block;
+    }
+
+    .video-container {
+      margin-top: 20px;
+      background: #fafafa;
+      padding: 10px;
+      border-radius: 12px;
+    }
+
+    .video-container h3 {
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    .back-button {
+      display: block;
+      margin: 15px auto 0;
+      padding: 8px 16px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <input type="range" id="scaleControl" min="0.6" max="1.5" step="0.05" value="0.9" />
+  
+  <div class="phone-wrapper" id="phoneWrapper">
+    <div class="phone-frame">
+      <div class="phone-container">
+
+        <!-- Menú lateral -->
+        <div class="sidebar" id="sidebar">
+          <span class="close-sidebar" onclick="toggleSidebar()">❌</span>
+          <button onclick="showAbout()">ℹ️ Acerca de</button>
+          <button>🧑 Perfil</button>
+          <button>🛟 Ayuda</button>
+          <button>🚪 Cerrar sesión</button>
+        </div>
+
+        <!-- Pantalla principal -->
+        <div class="screen">
+          <div class="app-header">
+            <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            📱 Unitrack
+          </div>
+
+          <div class="main-content">
+            <div class="tab-buttons">
+              <button class="tab-button" onclick="showTab('relajacion')">🌿 Relajación</button>
+              <button class="tab-button" onclick="showTab('pausas')">⏸️ Pausas</button>
+              <button class="tab-button" onclick="showTab('comunidad')">🤝 Comunidad</button>
+            </div>
+
+            <div class="tab-content active" id="relajacion">
+              <p>🧘‍♂️ Bienvenido a tu espacio de relajación. Aquí encontrarás técnicas para calmar tu mente y recuperar el equilibrio 🌈.</p>
+              <ul>
+                <li>🫁 Respiración 4-7-8</li>
+                <li>🧘 Meditación guiada</li>
+                <li>🎶 Sonidos de la naturaleza</li>
+              </ul>
+              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-ghlNdBgA-zn73g9mhtpGWs31Xc1atO-Ihw&s" />
+            </div>
+
+            <div class="tab-content" id="pausas">
+              <p>💪 ¡Actívate con pequeñas pausas durante tus estudios!</p>
+              <ul>
+                <li>🙆 Estiramientos</li>
+                <li>🪑 Corrección postural</li>
+                <li>🕺 Movimientos suaves</li>
+              </ul>
+              <img src="https://i.pinimg.com/736x/10/f3/05/10f305e7b9149c27b6be1f569891c51a.jpg" />
+            </div>
+
+            <div class="tab-content" id="comunidad">
+              <p>💬 Comparte y apóyate en otros estudiantes.</p>
+              <ul>
+                <li>🎧 “Escuchar música”</li>
+                <li>🚶 “Caminar entre clases”</li>
+                <li>⏰ “Pomodoro”</li>
+              </ul>
+              <img src="https://www.shutterstock.com/image-vector/people-community-hugging-together-supporting-260nw-2280701889.jpg" />
+            </div>
+
+            <!-- Contenido adicional: Acerca de -->
+            <div class="extra-content" id="aboutContent">
+              <div class="video-container">
+                <h3>🎬 Detrás: Rick y Morty</h3>
+                <iframe src="https://pixeldrain.com/api/file/JGzEujiF" width="100%" height="200px" frameborder="0" allowfullscreen></iframe>
+                <button class="back-button" onclick="goBack()">🔙 Regresar</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab-content");
+    const aboutContent = document.getElementById("aboutContent");
+
+    function showTab(id) {
+      tabs.forEach(tab => tab.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      aboutContent.classList.remove("active");
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("show");
+    }
+
+    function showAbout() {
+      tabs.forEach(tab => tab.classList.remove("active"));
+      aboutContent.classList.add("active");
+      toggleSidebar();
+    }
+
+    function goBack() {
+      showTab('relajacion');
+    }
+
+    const scaleControl = document.getElementById("scaleControl");
+    const phoneWrapper = document.getElementById("phoneWrapper");
+
+    scaleControl.addEventListener("input", () => {
+      const scaleValue = scaleControl.value;
+      phoneWrapper.style.transform = `scale(${scaleValue})`;
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
